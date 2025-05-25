@@ -1,18 +1,10 @@
 'use client'
 import Head from 'next/head'
-import Button from '@mui/material/Button'
-import axios from 'axios'
-import { useEffect } from 'react'
+import CustomTextField from 'src/components/text-field'
+import { Box } from '@mui/material'
 
 export default function Home() {
-  const fetchApiUser = async () => {
-    await axios.get('https://api-shop-lks2.onrender.com/api/users?limit=10&page=1&order=created%20asc').then(res => {
-      console.log('res', res)
-    })
-  }
-  useEffect(() => {
-    fetchApiUser()
-  }, [])
+
 
   return (
     <>
@@ -22,7 +14,13 @@ export default function Home() {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <Button variant='contained'>Hello world</Button>
+      {/* <Button variant='contained'>Hello world</Button> */}
+      <Box sx={{margin:6 , width:"200px"}}>
+        {' '}
+        <CustomTextField id='outlined-multiline-flexible' label='Multiline'>
+          Hello word update
+        </CustomTextField>
+      </Box>
     </>
   )
 }
