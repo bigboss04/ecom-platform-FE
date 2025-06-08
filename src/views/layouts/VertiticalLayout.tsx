@@ -4,16 +4,18 @@ import * as React from 'react'
 // next
 import { NextPage } from 'next'
 
-// styled
+// MUI
 import { styled } from '@mui/material/styles'
 import MuiDrawer from '@mui/material/Drawer'
 import Toolbar from '@mui/material/Toolbar'
-import List from '@mui/material/List'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 
 // layout
-import { mainListItems, secondaryListItems } from './listItem'
+import ListVerticalLayout from './ListVerticalLayout'
+
+// component
+import IconifyIcon from 'src/components/Icon'
 
 const drawerWidth: number = 240
 
@@ -48,7 +50,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: prop => prop !== 'open' })
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
-const VerticalLayout: NextPage<TProps> = ({ open, toggleDrawer }) => {
+const VertiticalLayout: NextPage<TProps> = ({ open, toggleDrawer }) => {
   return (
     <Drawer variant='permanent' open={open}>
       <Toolbar
@@ -59,15 +61,13 @@ const VerticalLayout: NextPage<TProps> = ({ open, toggleDrawer }) => {
           px: [1]
         }}
       >
-        <IconButton onClick={toggleDrawer}></IconButton>
+        <IconButton onClick={toggleDrawer}>
+          <IconifyIcon icon='system-uicons:exit-left' />
+        </IconButton>
       </Toolbar>
       <Divider />
-      <List component='nav'>
-        {mainListItems}
-        <Divider sx={{ my: 1 }} />
-        {secondaryListItems}
-      </List>
+      <ListVerticalLayout />
     </Drawer>
   )
 }
-export default VerticalLayout
+export default VertiticalLayout
