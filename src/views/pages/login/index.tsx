@@ -36,6 +36,10 @@ import LoginLight from '../../../../public/images/register-light.png'
 
 import IconifyIcon from 'src/components/Icon'
 
+// useAuth
+
+import { useAuth } from 'src/hooks/useAuth'
+
 type TProps = {}
 
 const LoginPage: NextPage<TProps> = () => {
@@ -51,6 +55,10 @@ const LoginPage: NextPage<TProps> = () => {
     email: yup.string().required('The field is required').matches(EMAIL_REG, 'The field is must email type'),
     password: yup.string().required('The field is required').matches(PASSWORD_REG, 'The password is must password type')
   })
+
+  // context
+  const { login } = useAuth()
+
   const {
     handleSubmit,
     control,
@@ -63,10 +71,12 @@ const LoginPage: NextPage<TProps> = () => {
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
-  console.log('erros', { errors })
 
   const onsubmit = (data: { email: string; password: string }) => {
-    console.log('data', { data, errors })
+    if (!Object.keys(errors)?.length) {
+      login({ ...data, rememberMe: isRemember })
+    }
+    console.log('data', { data })
   }
 
   return (
@@ -213,13 +223,15 @@ const LoginPage: NextPage<TProps> = () => {
             </Box>
 
             <Typography sx={{ textAlign: 'center', mt: 2, mb: 2 }}> </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px' }}>
+            <Box
+              sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px', overflow: 'hidden' }}
+            >
               <IconButton sx={{ color: '#497ce2' }}>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   aria-hidden='true'
                   role='img'
-                  font-size='1.375rem'
+                  fontSize='1.375rem'
                   className='iconify iconify--mdi'
                   width='1em'
                   height='1em'
@@ -237,7 +249,7 @@ const LoginPage: NextPage<TProps> = () => {
                   xmlns='http://www.w3.org/2000/svg'
                   aria-hidden='true'
                   role='img'
-                  font-size='1.375rem'
+                  fontSize='1.270rem'
                   className='iconify iconify--mdi'
                   width='1em'
                   height='1em'
