@@ -5,7 +5,7 @@ import { Box, BoxProps, styled } from '@mui/material'
 type TProps = {
   children: React.ReactNode
 }
-const BlankLayoutWrapper = styled(Box)<BoxProps>(({ theme }) => ({ height: '100vh' }))
+const BlankLayoutWrapper = styled(Box)<BoxProps>(({  }) => ({ height: '100vh' }))
 
 const BlankLayout: NextPage<TProps> = ({ children }) => {
   return (
