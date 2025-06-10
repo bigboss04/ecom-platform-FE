@@ -1,28 +1,27 @@
 export const VerticalItems = [
   {
-    title: 'Parent 1',
-    icon: 'ic:round-expand-more',
-    path: '',
+    title: 'System',
+    icon: 'mage:message',
     children: [
       {
         title: 'Children1',
-        icon: 'ic:round-expand-more',
-        path: '',
-        children: [{ title: 'Children111', icon: 'ic:round-expand-more', path: '' }]
+        icon: 'mage:message',
+        path: '/product ',
+        children: [{ title: 'Children111', icon: 'mage:message', path: '/product-type' }]
       }
     ]
   },
-   {
-    title: 'Parent 2',
-    icon: 'ic:round-expand-more',
-    path: '',
+  {
+    title: 'User',
+    icon: 'mage:message',
+    path: '/user',
     children: [
       {
         title: 'Children2',
-        icon: 'ic:round-expand-more',
+        icon: 'mage:message',
         path: '',
-        children: [{ title: 'Children21', icon: 'ic:round-expand-more', path: '' }]
+        children: [{ title: 'Children21', icon: 'mage:message', path: '' }]
       }
     ]
-  },
+  }
 ]

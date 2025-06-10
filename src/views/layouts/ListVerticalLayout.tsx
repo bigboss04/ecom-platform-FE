@@ -11,32 +11,53 @@ import IconifyIcon from 'src/components/Icon'
 // config
 import { VerticalItems } from 'src/configs/layout'
 
-type MenuItem = {
-  title: string
-  icon: string
-  children?: MenuItem[]
+// type MenuItem = {
+//   title: string
+//   icon: string
+//   children?: MenuItem[]
+// }
+type TProps = {
+  open: boolean
 }
-type TProps = {}
+
+type TListItems = {
+  level: number
+  openItems: {
+    [key: string]: boolean
+  }
+  items: any
+  setOpenItems: React.Dispatch<
+    React.SetStateAction<{
+      [key: string]: boolean
+    }>
+  >
+  disabled: boolean
+}
 
 // de quy
 
-const RecursiveListItem = ({ items, level }: { items: MenuItem[]; level: number }) => {
+const RecursiveListItems: NextPage<TListItems> = ({ items, level, openItems, setOpenItems, disabled }) => {
   // Tạo state lưu trạng thái mở của từng item theo key
-  const [openItem, setOpenItem] = React.useState<{ [key: string]: boolean }>({})
-
-  const handleClick = React.useCallback((title: string) => {
-    setOpenItem(prev => ({
-      ...prev,
-      [title]: !prev[title]
-    }))
-  }, [])
+  const handleClick = (title: string) => {
+    if (!disabled) {
+      setOpenItems(prev => ({
+        ...prev,
+        [title]: !prev[title]
+      }))
+    }
+  }
 
   return (
     <>
-      {items.map(item => (
+      {items?.map((item: any) => (
         <React.Fragment key={item.title}>
           <ListItemButton
-            sx={{ padding: `8px 10px 8px ${level * 10}px` }}
+            sx={{
+              padding: `8px 10px 8px ${level * (level === 1 ? 28 : 20)}px`,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
             onClick={() => {
               if (item.children) {
                 handleClick(item.title)
@@ -46,11 +67,10 @@ const RecursiveListItem = ({ items, level }: { items: MenuItem[]; level: number 
             <ListItemIcon>
               <IconifyIcon icon={item.icon} />
             </ListItemIcon>
-            <ListItemText primary={item.title} />
-
+            {!disabled && <ListItemText primary={item.title} />}
             {item?.children && item.children.length > 0 && (
               <>
-                {openItem[item.title] ? (
+                {openItems[item.title] ? (
                   <IconifyIcon icon='si:expand-more-duotone' />
                 ) : (
                   <IconifyIcon icon='si:expand-less-line' />
@@ -62,8 +82,14 @@ const RecursiveListItem = ({ items, level }: { items: MenuItem[]; level: number 
           {item.children && item.children.length > 0 && (
             <>
               {item.children && (
-                <Collapse in={openItem[item.title]} timeout='auto' unmountOnExit>
-                  <RecursiveListItem items={item.children} level={level + 1} />
+                <Collapse in={openItems[item.title]} timeout='auto' unmountOnExit>
+                  <RecursiveListItems
+                    items={item.children}
+                    level={level + 1}
+                    openItems={openItems}
+                    setOpenItems={setOpenItems}
+                    disabled={disabled}
+                  />
                 </Collapse>
               )}
             </>
@@ -74,15 +100,28 @@ const RecursiveListItem = ({ items, level }: { items: MenuItem[]; level: number 
   )
 }
 
-const ListVerticalLayout: NextPage<TProps> = () => {
+const ListVerticalLayout: NextPage<TProps> = ({ open }) => {
   // Tạo state lưu trạng thái mở của từng item theo key
+  const [openItems, setOpenItems] = React.useState<{ [key: string]: boolean }>({})
+  React.useEffect(() => {
+    if (!open) {
+      setOpenItems({})
+    }
+  }, [open])
+
   return (
     <List
       sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
       component='nav'
       aria-labelledby='nested-list-subheader'
     >
-      <RecursiveListItem items={VerticalItems} level={1} />
+      <RecursiveListItems
+        disabled={!open}
+        items={VerticalItems}
+        level={1}
+        openItems={openItems}
+        setOpenItems={setOpenItems}
+      />
     </List>
   )
 }

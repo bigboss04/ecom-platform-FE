@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-// next 
+// next
 import { NextPage } from 'next'
 
 // MUI
@@ -11,8 +11,7 @@ import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import Badge from '@mui/material/Badge'
 
-
-// component 
+// component
 import IconifyIcon from 'src/components/Icon'
 
 //Layout
@@ -33,6 +32,7 @@ interface AppBarProps extends MuiAppBarProps {
 type TProps = {
   open: boolean
   toggleDrawer: () => void
+  isHideMenu?: false
 }
 
 const AppBar = styled(MuiAppBar, {
@@ -40,8 +40,9 @@ const AppBar = styled(MuiAppBar, {
 })<AppBarProps>(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
 
-  // backgroundColor: theme.palette.customColors.main,
-  // color: theme.palette.primary.main,
+  backgroundColor:
+    theme.palette.mode == 'light' ? theme.palette.customColors.lightPaperBg : theme.palette.customColors.darkPaperBg,
+  color: theme.palette.primary.main,
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen
@@ -59,26 +60,30 @@ const AppBar = styled(MuiAppBar, {
 // TODO remove, this demo shouldn't need to reset the theme.
 // const defaultTheme = createTheme();
 
-const HorizontalLayout: NextPage<TProps> = ({ open, toggleDrawer }) => {
+const HorizontalLayout: NextPage<TProps> = ({ open, toggleDrawer, isHideMenu }) => {
   return (
     <AppBar position='absolute' open={open}>
       <Toolbar
         sx={{
-          pr: '24px' // keep right padding when drawer closed
+          pr: '30px',
+          margin: '0 20px' // keep right padding when drawer closed
         }}
       >
-        <IconButton
-          edge='start'
-          color='inherit'
-          aria-label='open drawer'
-          onClick={toggleDrawer}
-          sx={{
-            marginRight: '36px',
-            ...(open && { display: 'none' })
-          }}
-        >
-          <IconifyIcon icon='material-symbols:menu-rounded' />
-        </IconButton>
+        {!isHideMenu && (
+          <IconButton
+            edge='start'
+            color='inherit'
+            aria-label='open drawer'
+            onClick={toggleDrawer}
+            sx={{
+              marginRight: '36px',
+              padding: '10px',
+              ...(open && { display: 'none' })
+            }}
+          >
+            <IconifyIcon icon='material-symbols:menu-rounded' />
+          </IconButton>
+        )}
         <Typography component='h1' variant='h6' color='inherit' noWrap sx={{ flexGrow: 1 }}>
           Dashboard
         </Typography>
