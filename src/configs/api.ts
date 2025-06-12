@@ -6,3 +6,4 @@ export const CONFIG_API = {
     AUTH_ME: `${BASE_URL}/auth/me`
   }
 }
+

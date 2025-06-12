@@ -1,9 +1,5 @@
 // ** React Imports
-<<<<<<< Updated upstream
 import { createContext, useEffect, useState, ReactNode } from 'react'
-=======
-import { createContext, useState, ReactNode, useEffect } from 'react'
->>>>>>> Stashed changes
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -13,16 +9,14 @@ import axios from 'axios'
 
 // ** Config
 import authConfig from 'src/configs/auth'
+import { CONFIG_API } from 'src/configs/api'
+
+// ** Services & Helpers
+import { LoginAuth, logoutAuth } from 'src/services/auth'
+import { clearLocalUserData, setLocalUserData } from 'src/helpers/storage'
 
 // ** Types
 import { AuthValuesType, LoginParams, ErrCallbackType, UserDataType } from './types'
-<<<<<<< Updated upstream
-=======
-import { LoginAuth, logoutAuth } from 'src/services/auth'
-import axios from 'axios'
-import { CONFIG_API } from 'src/configs/api'
-import { clearLocalUserData, setLocalUserData } from 'src/helpers/storage'
->>>>>>> Stashed changes
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -50,108 +44,67 @@ const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
-<<<<<<< Updated upstream
-      const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
-      if (storedToken) {
-        setLoading(true)
-        await axios
-          .get(authConfig.meEndpoint, {
-            headers: {
-              Authorization: storedToken
-            }
-          })
-          .then(async response => {
-            setLoading(false)
-            setUser({ ...response.data.userData })
-          })
-          .catch(() => {
-            localStorage.removeItem('userData')
-            localStorage.removeItem('refreshToken')
-            localStorage.removeItem('accessToken')
-            setUser(null)
-            setLoading(false)
-            if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
-=======
       const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)
-      console.log('storedToken', { storedToken })
+
       if (storedToken) {
         setLoading(true)
-        await axios
-          .get(CONFIG_API.AUTH.AUTH_ME, {
+        try {
+          const response = await axios.get(CONFIG_API.AUTH.AUTH_ME, {
             headers: {
               Authorization: `Bearer ${storedToken}`
             }
           })
-          .then(async response => {
-            console.log('response', response)
-            setLoading(false)
-            setUser({ ...response.data.data })
-          })
-          .catch(() => {
-            clearLocalUserData()
-            setUser(null)
-            setLoading(false)
-            if (!router.pathname.includes('login')) {
->>>>>>> Stashed changes
-              router.replace('/login')
-            }
-          })
+
+          setUser({ ...response.data.data })
+        } catch (error) {
+          clearLocalUserData()
+          setUser(null)
+          if (!router.pathname.includes('login')) {
+            router.replace('/login')
+          }
+        } finally {
+          setLoading(false)
+        }
       } else {
         setLoading(false)
       }
     }
 
     initAuth()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [router.pathname])
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
-<<<<<<< Updated upstream
-    axios
-      .post(authConfig.loginEndpoint, params)
-      .then(async response => {
-        params.rememberMe
-          ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
-          : null
-        const returnUrl = router.query.returnUrl
-
-        setUser({ ...response.data.userData })
-        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
-=======
     LoginAuth({ email: params.email, password: params.password })
       .then(async response => {
-        params.rememberMe
-          ? setLocalUserData(
-              JSON.stringify(response.data.user),
-              response.data.access_token,
-              response.data.refresh_token
-            )
-          : null
-        const returnUrl = router.query.returnUrl
-        console.log('response', { response })
+        // Lưu token và user nếu "rememberMe"
+        if (params.rememberMe) {
+          setLocalUserData(
+            JSON.stringify(response.data.user),
+            response.data.access_token,
+            response.data.refresh_token
+          )
+        }
 
         setUser({ ...response.data.user })
->>>>>>> Stashed changes
 
+        const returnUrl = router.query.returnUrl
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-
         router.replace(redirectURL as string)
       })
-
       .catch(err => {
         if (errorCallback) errorCallback(err)
       })
   }
 
   const handleLogout = () => {
-    logoutAuth().then(res => {
+    logoutAuth().then(() => {
       setUser(null)
       clearLocalUserData()
       router.push('/login')
     })
   }
 
-  const values = {
+  const values: AuthValuesType = {
     user,
     loading,
     setUser,
