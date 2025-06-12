@@ -61,6 +61,7 @@ if (themeConfig.routingLoader) {
   })
 }
 
+//auth: true // guest: false
 const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
   if (guestGuard) {
     return <GuestGuard fallback={<FallbackSpinner />}>{children}</GuestGuard>
